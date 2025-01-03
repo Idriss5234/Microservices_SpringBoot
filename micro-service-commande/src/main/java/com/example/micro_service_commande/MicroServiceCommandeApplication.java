@@ -2,6 +2,7 @@ package com.example.micro_service_commande;
 
 import com.example.micro_service_commande.Model.Commande;
 import com.example.micro_service_commande.Repository.CommandeRepository;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,6 +14,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 @SpringBootApplication
+@EnableRabbit  // Enable RabbitMQ support
+
 public class MicroServiceCommandeApplication {
 
 	public static void main(String[] args) {

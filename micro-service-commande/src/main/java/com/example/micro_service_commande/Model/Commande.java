@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.Instant;
 
 @Getter
@@ -54,7 +55,7 @@ public class Commande {
         return date;
     }
 
-    public void setDate(Instant date) {
+    public void setDate(Timestamp date) {
         this.date = date;
     }
 
