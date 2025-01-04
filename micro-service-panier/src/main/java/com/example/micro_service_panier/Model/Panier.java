@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.Instant;
 
 @Getter
@@ -44,7 +45,7 @@ public class Panier {
         return aRetirer;
     }
 
-    public void setaRetirer(Instant aRetirer) {
+    public void setaRetirer(Timestamp aRetirer) {
         this.aRetirer = aRetirer;
     }
 
