@@ -40,8 +40,8 @@ public class MicroServiceCommandeApplication {
 			repository.save(new Commande(
 					tomorrowAt14Instant,            // date set to tomorrow at 14:00
 					1,                              // userId (example: 1 for the first user)
-					101,                            // panierId (example: 101 for a specific panier)
-					3,                              // quantité (example: 3 items)
+					1,                            // panierId (example: 101 for a specific panier)
+					2,                              // quantité (example: 3 items)
 					new BigDecimal("19.99"),        // prix (example: price of the items)
 					"En cours"                      // statut (example: "In progress")
 			));

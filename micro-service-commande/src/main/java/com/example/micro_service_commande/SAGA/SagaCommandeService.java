@@ -31,7 +31,7 @@ public class SagaCommandeService {
         commande.setQuantité(requiredQuantity);
         commande.setPrix(BigDecimal.valueOf(0));  // Placeholder for price calculation logic
         commande.setStatut("Pending");
-        commande.setDate(new java.sql.Timestamp(System.currentTimeMillis()));
+        commande.setDate(new java.sql.Timestamp(System.currentTimeMillis()).toInstant());
 
         commande = commandeRepository.save(commande);
 

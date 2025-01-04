@@ -55,7 +55,7 @@ public class Commande {
         return date;
     }
 
-    public void setDate(Timestamp date) {
+    public void setDate(Instant date) {
         this.date = date;
     }
 

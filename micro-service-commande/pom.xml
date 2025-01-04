@@ -35,7 +35,7 @@
 		<dependency>
 			<groupId>com.rabbitmq</groupId>
 			<artifactId>amqp-client</artifactId>
-			<version>3.2.1</version> <!-- Use the latest version -->
+			<version>5.18.0</version> <!-- Use the latest version -->
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

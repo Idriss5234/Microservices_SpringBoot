@@ -24,12 +24,12 @@ public class MicroServicePanierApplication {
 	ApplicationRunner start(PanierRepository repository) {
 		return args -> {
 			repository.save(new Panier(
-					"Fruits et légumes",                  // nomPanier
-					"Pommes, bananes, carottes",          // itemDetails
+					"Fruits ",                  // nomPanier
+					"Pommes, bananes",          // itemDetails
 					true,                                 // disponibilité
 					Instant.now(),                        // aRetirer
-					new BigDecimal("4.99"),              // prix
-					5                                     // quantité
+					new BigDecimal("2.99"),              // prix
+					10                                     // quantité
 			));
 		};
 }}

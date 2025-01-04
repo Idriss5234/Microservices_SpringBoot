@@ -45,7 +45,7 @@ public class Panier {
         return aRetirer;
     }
 
-    public void setaRetirer(Timestamp aRetirer) {
+    public void setaRetirer(Instant aRetirer) {
         this.aRetirer = aRetirer;
     }
 
