@@ -30,7 +30,7 @@ public class SagaPanierService {
                     panier.getQuantité(),
                     panier.getDisponibilité()
             );
-            rabbitTemplate.convertAndSend("saga-exchange", "panier-get-routing-key", sagaMessage);
+            rabbitTemplate.convertAndSend("saga-exchange", "panier-api-get-producer-routing-key", sagaMessage);
         } else {
             System.out.println("Panier not found in the database.");
         }

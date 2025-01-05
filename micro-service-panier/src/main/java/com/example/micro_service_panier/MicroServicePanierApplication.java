@@ -20,16 +20,4 @@ public class MicroServicePanierApplication {
 		SpringApplication.run(MicroServicePanierApplication.class, args);
 	}
 
-	@Bean
-	ApplicationRunner start(PanierRepository repository) {
-		return args -> {
-			repository.save(new Panier(
-					"Fruits et légumes",                  // nomPanier
-					"Pommes, bananes, carottes",          // itemDetails
-					true,                                 // disponibilité
-					Instant.now(),                        // aRetirer
-					new BigDecimal("4.99"),              // prix
-					5                                     // quantité
-			));
-		};
-}}
+}
