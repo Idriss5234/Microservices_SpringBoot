@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.Instant;
 
 @SpringBootApplication
@@ -27,7 +28,7 @@ public class MicroServicePanierApplication {
 					"Fruits ",                  // nomPanier
 					"Pommes, bananes",          // itemDetails
 					true,                                 // disponibilité
-					Instant.now(),                        // aRetirer
+					Timestamp.from(Instant.now()),                   // aRetirer
 					new BigDecimal("2.99"),              // prix
 					10                                     // quantité
 			));

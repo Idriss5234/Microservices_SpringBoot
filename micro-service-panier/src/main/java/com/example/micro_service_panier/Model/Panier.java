@@ -6,7 +6,6 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.time.Instant;
 
 @Getter
 @Setter
@@ -32,7 +31,7 @@ public class Panier {
     private BigDecimal prix;
 
     @Column(name = "a_retirer")
-    private Instant aRetirer;
+    private Timestamp aRetirer;
 
     @Column(name = "nom_panier")
     private String nomPanier;
@@ -41,11 +40,11 @@ public class Panier {
 
     }
 
-    public Instant getaRetirer() {
+    public Timestamp getaRetirer() {
         return aRetirer;
     }
 
-    public void setaRetirer(Instant aRetirer) {
+    public void setaRetirer(Timestamp aRetirer) {
         this.aRetirer = aRetirer;
     }
 
@@ -97,7 +96,7 @@ public class Panier {
         this.quantité = quantité;
     }
 
-    public Panier(String nomPanier,String itemDetails,Boolean disponibilité,  Instant aRetirer,  BigDecimal prix, Integer quantité) {
+    public Panier(String nomPanier,String itemDetails,Boolean disponibilité,  Timestamp aRetirer,  BigDecimal prix, Integer quantité) {
         this.aRetirer = aRetirer;
         this.disponibilité = disponibilité;
         this.id = id;

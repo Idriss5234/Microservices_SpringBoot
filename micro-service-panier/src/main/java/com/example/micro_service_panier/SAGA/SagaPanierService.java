@@ -30,7 +30,7 @@ public class SagaPanierService {
                     panier.getQuantité(),
                     panier.getDisponibilité()
             );
-            rabbitTemplate.convertAndSend("saga-exchange", "panier-get-routing-key", sagaMessage);
+            rabbitTemplate.convertAndSend("saga-exchange", "panier-api-get-producer-routing-key", sagaMessage);
         } else {
             System.out.println("Panier not found in the database.");
         }
@@ -65,7 +65,6 @@ public class SagaPanierService {
             Panier panier = panierRepository.findById(message.getPanierId()).orElse(null);
             if (panier != null) {
                 panier.setQuantité(panier.getQuantité() - message.getRequiredQte());
-                panier.setaRetirer(new java.sql.Timestamp(System.currentTimeMillis()).toInstant());
                 panierRepository.save(panier);
                 System.out.println("Panier successfully updated. Saga completed.");
             } else {
