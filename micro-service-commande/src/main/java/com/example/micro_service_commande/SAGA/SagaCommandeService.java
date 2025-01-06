@@ -75,7 +75,10 @@ public class SagaCommandeService {
 
                 Commande commande = commandeRepository.findById(commandeID).orElse(null);
                 commande.setStatut("Completed");
-                commandeRepository.save(commande);
+                System.out.println("message.getPanierPrix()"+message.getPanierPrix()+"message.getRequiredQte()"+message.getRequiredQte());
+                commande.setPrix(message.getPanierPrix()*message.getRequiredQte());
+
+            commandeRepository.save(commande);
                 System.out.println("Commande successfully updated.");
         } else {
             System.out.println("Commande update failed.");
