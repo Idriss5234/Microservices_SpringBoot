@@ -48,10 +48,10 @@ public class SagaPanierService {
 
     @RabbitListener(queues = "api2-consumer-queue")
     public void handlePanierPostResponse(SagaMessage message) {
-        System.out.println("Panier Update Response: " + message.getStatus());
-        if ("UPDATE_PANIER".equals(message.getStatus())) {
+        Panier panier = panierRepository.findById(message.getPanierId()).orElse(null);
+        System.out.println("Panier Update Response: " + message.getStatus()+panier.getQuantité()+ message.getRequiredQte());
+        if ("UPDATE_PANIER".equals(message.getStatus()) && (panier.getQuantité() > message.getRequiredQte())) {
             System.out.println("Updating Panier in the database...");
-            Panier panier = panierRepository.findById(message.getPanierId()).orElse(null);
             if (panier != null) {
                 panier.setQuantité(panier.getQuantité() - message.getRequiredQte());
                 panierRepository.save(panier);
@@ -67,6 +67,12 @@ public class SagaPanierService {
             }
         } else {
             System.out.println("Panier update failed. Compensation may be required.");
+            rabbitTemplate.convertAndSend("saga-exchange", "api2-producer-routing-key", new SagaMessage(
+                    "Panier not Succefully updated",
+                    (int) message.getPanierId(),
+                    message.getRequiredQte(),
+                    message.getPanierPrix()
+            ));
         }
     }
 }
