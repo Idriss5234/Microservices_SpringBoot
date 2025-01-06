@@ -1,6 +1,8 @@
-package com.example.micro_service_panier.SAGA;
+package com.example.micro_service_commande.SAGA;
+
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 public class SagaMessage implements Serializable {
 
@@ -8,7 +10,7 @@ public class SagaMessage implements Serializable {
     private int panierId;       // Panier ID
     private int requiredQte;    // Required quantity
     private int qte;            // Quantity available
-    private boolean dispo;      // Availability flag
+    private boolean dispo;
     private double panierPrix;// Availability flag
 
     // Constructors
@@ -21,7 +23,6 @@ public class SagaMessage implements Serializable {
         this.panierPrix = panierPrix;
     }
 
-    // Constructors
     public SagaMessage() {
     }
 
@@ -30,12 +31,11 @@ public class SagaMessage implements Serializable {
 
     }
 
-    public SagaMessage(String status, int panierId, int requiredQte,double panierPrix) {
+    public SagaMessage(String status, int panierId, int requiredQte,double panierPrix ) {
         this.status = status;
         this.panierId = panierId;
         this.requiredQte = requiredQte;
         this.panierPrix=panierPrix;
-
     }
 
 
@@ -49,7 +49,7 @@ public class SagaMessage implements Serializable {
         this.dispo = dispo;
     }
 
-    public long getPanierId() {
+    public int getPanierId() {
         return panierId;
     }
 

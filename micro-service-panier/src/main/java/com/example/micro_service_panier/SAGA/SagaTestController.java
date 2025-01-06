@@ -1,12 +1,7 @@
 package com.example.micro_service_panier.SAGA;
 
-import com.example.micro_service_panier.Model.Panier;
-import com.example.micro_service_panier.Repository.PanierRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/test-saga")

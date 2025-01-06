@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.Instant;
 
 @Getter
@@ -27,8 +28,8 @@ public class Commande {
     @Column(name = "`quantité`", nullable = false)
     private Integer quantité;
 
-    @Column(name = "prix", nullable = false, precision = 10, scale = 2)
-    private BigDecimal prix;
+    @Column(name = "prix", nullable = false)
+    private double prix;
 
     @ColumnDefault("'Pending'")
     @Column(name = "statut", length = 50)
@@ -37,7 +38,7 @@ public class Commande {
     @Column(name = "date")
     private Instant date;
 
-    public Commande(Instant date,Integer userId, Integer panierId, Integer quantité,BigDecimal prix, String statut) {
+    public Commande(Instant date,Integer userId, Integer panierId, Integer quantité,double prix, String statut) {
         this.date = date;
         this.panierId = panierId;
         this.prix = prix;
@@ -74,11 +75,11 @@ public class Commande {
         this.panierId = panierId;
     }
 
-    public BigDecimal getPrix() {
+    public double getPrix() {
         return prix;
     }
 
-    public void setPrix(BigDecimal prix) {
+    public void setPrix(double prix) {
         this.prix = prix;
     }
 

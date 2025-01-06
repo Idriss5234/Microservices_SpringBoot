@@ -14,6 +14,7 @@ public class MicroServiceUtilisateurApplication {
 		SpringApplication.run(MicroServiceUtilisateurApplication.class, args);
 	}
 
+	
 	@Bean
 	ApplicationRunner start(UtilisateurRepository repository) {
 		return args -> {

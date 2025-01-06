@@ -16,62 +16,69 @@ public class SagaPanierService {
         this.panierRepository = panierRepository;
     }
 
-    /**
-     * Starts the Saga for checking Panier.
-     */
-    public void startPanierSaga(int panierId, int requiredQuantity) {
-        System.out.println("Starting Panier Saga...");
-        Panier panier = panierRepository.findById((long) panierId).orElse(null);
-        if (panier != null) {
-            SagaMessage sagaMessage = new SagaMessage(
-                    "CHECK_PANIER",
-                    panierId,
-                    requiredQuantity,
-                    panier.getQuantité(),
-                    panier.getDisponibilité()
-            );
-            rabbitTemplate.convertAndSend("saga-exchange", "panier-api-get-producer-routing-key", sagaMessage);
-        } else {
-            System.out.println("Panier not found in the database.");
-        }
-    }
 
     /**
      * Handles the response from the get API (Panier Check).
      */
-    @RabbitListener(queues = "panier-api-get-consumer-queue")
+    @RabbitListener(queues = "api1-consumer-queue")
     public void handlePanierGetResponse(SagaMessage message) {
         System.out.println("Panier Check Response: " + message.getStatus());
-        if ("success".equals(message.getStatus()) && message.getQte() >= message.getRequiredQte()) {
-            System.out.println("Panier validation successful. Proceeding to Commande...");
-            rabbitTemplate.convertAndSend("saga-exchange", "commande-routing-key", new SagaMessage(
-                    "PROCESS_COMMANDE",
+        Panier panier= panierRepository.findById(message.getPanierId()).orElse(null);
+        if ("success".equals(message.getStatus()) && panier!=null) {
+            System.out.println("Panier exists. Proceeding to Commande...");
+            System.out.println("Panier prix: "+panier.getPrix() );
+            rabbitTemplate.convertAndSend("saga-exchange", "api1-producer-routing-key", new SagaMessage(
+                    "success",
                     (int) message.getPanierId(),
-                    message.getRequiredQte()
+                    message.getRequiredQte(),
+                    panier.getPrix()
             ));
         } else {
-            System.out.println("Panier validation failed. Insufficient quantity or unavailable.");
+            System.out.println("Panier not found. Initiating compensation...");
+            rabbitTemplate.convertAndSend("saga-exchange", "compensate-api1-routing-key", new SagaMessage(
+                "Compensate for unfound panier",
+                (int) message.getPanierId(),
+                message.getRequiredQte(),
+                message.getPanierPrix()));
+
         }
     }
 
     /**
      * Handles the update after the Commande service processes the request.
      */
-    @RabbitListener(queues = "panier-api-post-consumer-queue")
+
+
+
+
+
+    @RabbitListener(queues = "api2-consumer-queue")
     public void handlePanierPostResponse(SagaMessage message) {
-        System.out.println("Panier Update Response: " + message.getStatus());
-        if ("success".equals(message.getStatus())) {
+        Panier panier = panierRepository.findById(message.getPanierId()).orElse(null);
+        System.out.println("Panier Update Response: " + message.getStatus()+panier.getQuantité()+ message.getRequiredQte());
+        if ("UPDATE_PANIER".equals(message.getStatus()) && (panier.getQuantité() > message.getRequiredQte())) {
             System.out.println("Updating Panier in the database...");
-            Panier panier = panierRepository.findById(message.getPanierId()).orElse(null);
             if (panier != null) {
                 panier.setQuantité(panier.getQuantité() - message.getRequiredQte());
                 panierRepository.save(panier);
                 System.out.println("Panier successfully updated. Saga completed.");
+                rabbitTemplate.convertAndSend("saga-exchange", "api2-producer-routing-key", new SagaMessage(
+                        "Panier Succefully updated",
+                        (int) message.getPanierId(),
+                        message.getRequiredQte(),
+                        message.getPanierPrix()
+                ));
             } else {
                 System.out.println("Panier not found for update.");
-            }
+                }
         } else {
-            System.out.println("Panier update failed. Compensation may be required.");
+            System.out.println("Panier update failed. Initiating compensation...");
+            rabbitTemplate.convertAndSend("saga-exchange", "compensate-api2-routing-key", new SagaMessage(
+                "Compensate for invalid quantity",
+                (int) message.getPanierId(),
+                message.getRequiredQte(),
+                message.getPanierPrix()
+        ));
         }
     }
 }

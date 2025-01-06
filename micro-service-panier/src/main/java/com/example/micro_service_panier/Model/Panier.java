@@ -27,8 +27,8 @@ public class Panier {
     @Column(name = "`quantité`", nullable = false)
     private Integer quantité;
 
-    @Column(name = "prix", nullable = false, precision = 10, scale = 2)
-    private BigDecimal prix;
+    @Column(name = "prix", nullable = false)
+    private double prix;
 
     @Column(name = "a_retirer")
     private Timestamp aRetirer;
@@ -80,11 +80,11 @@ public class Panier {
         this.nomPanier = nomPanier;
     }
 
-    public BigDecimal getPrix() {
+    public double getPrix() {
         return prix;
     }
 
-    public void setPrix(BigDecimal prix) {
+    public void setPrix(double prix) {
         this.prix = prix;
     }
 
@@ -96,7 +96,7 @@ public class Panier {
         this.quantité = quantité;
     }
 
-    public Panier(String nomPanier,String itemDetails,Boolean disponibilité,  Timestamp aRetirer,  BigDecimal prix, Integer quantité) {
+    public Panier(String nomPanier,String itemDetails,Boolean disponibilité,  Timestamp aRetirer,  double prix, Integer quantité) {
         this.aRetirer = aRetirer;
         this.disponibilité = disponibilité;
         this.id = id;
