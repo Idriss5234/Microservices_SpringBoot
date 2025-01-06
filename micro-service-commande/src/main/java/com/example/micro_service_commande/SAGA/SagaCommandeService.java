@@ -46,16 +46,16 @@ public class SagaCommandeService {
     @RabbitListener(queues = "api1-producer-queue")
     public void handleCommandeGetResponse(SagaMessage message) {
         System.out.println("Commande Get Response: " + message.getStatus());
-      /*  if ("success".equals(message.getStatus())) {
+        if ("success".equals(message.getStatus())) {
             System.out.println("Commande validated. Proceeding to update...");
             rabbitTemplate.convertAndSend("saga-exchange", "api2-consumer-routing-key", new SagaMessage(
-                    "UPDATE_PANIER",
+                    "UPDATE_PANIER yallah",
                     (int) message.getPanierId(),
                     message.getRequiredQte()
             ));
         } else {
             System.out.println("Commande validation failed.");
-        }*/
+        }
     }
 
     /**
@@ -63,21 +63,21 @@ public class SagaCommandeService {
      */
 
 
-    /*
+
     @RabbitListener(queues = "api2-producer-queue")
     public void handleCommandePostResponse(SagaMessage message) {
         System.out.println("Commande Update Response: " + message.getStatus());
         if ("success".equals(message.getStatus())) {
-            Commande commande = commandeRepository.findById(message.getPanierId()).orElse(null);
+         /*   Commande commande = commandeRepository.findById(message.getPanierId()).orElse(null);
             if (commande != null) {
                 commande.setStatut("Completed");
                 commandeRepository.save(commande);
                 System.out.println("Commande successfully updated.");
             } else {
                 System.out.println("Commande not found for update.");
-            }
+            }*/
         } else {
             System.out.println("Commande update failed.");
         }
-    }*/
+    }
 }

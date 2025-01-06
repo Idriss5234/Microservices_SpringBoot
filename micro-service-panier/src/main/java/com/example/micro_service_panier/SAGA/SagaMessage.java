@@ -37,7 +37,7 @@ public class SagaMessage implements Serializable {
         this.dispo = dispo;
     }
 
-    public int getPanierId() {
+    public long getPanierId() {
         return panierId;
     }
 
