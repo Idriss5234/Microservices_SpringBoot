@@ -7,7 +7,6 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 
 @Service
 public class SagaCommandeService {
@@ -28,7 +27,7 @@ public class SagaCommandeService {
        System.out.println("Starting Commande Saga...");
       //  commande = commandeRepository.save(commande);
         userID = userId;
-        SagaMessage sagaMessage = new SagaMessage("success", panierId, requiredQuantity);
+        SagaMessage sagaMessage = new SagaMessage("success", panierId, requiredQuantity,0.00);
 
         rabbitTemplate.convertAndSend("saga-exchange", "api1-consumer-routing-key", sagaMessage);
     }
@@ -44,7 +43,8 @@ public class SagaCommandeService {
             rabbitTemplate.convertAndSend("saga-exchange", "api2-consumer-routing-key", new SagaMessage(
                     "UPDATE_PANIER",
                     (int) message.getPanierId(),
-                    message.getRequiredQte()
+                    message.getRequiredQte(),
+                    message.getPanierPrix()
             ));
         } else {
             System.out.println("Commande validation failed.");
@@ -65,7 +65,8 @@ public class SagaCommandeService {
             commande.setUserId(userID);
             commande.setPanierId(message.getPanierId());
             commande.setQuantité(message.getRequiredQte());
-            commande.setPrix(BigDecimal.valueOf(0));  // Placeholder for price calculation logic
+            System.out.println("price final : "+message.getPanierPrix()*message.getRequiredQte());
+            commande.setPrix(message.getPanierPrix()*message.getRequiredQte());  // Placeholder for price calculation logic
             commande.setStatut("Pending");
             commande.setDate(new java.sql.Timestamp(System.currentTimeMillis()).toInstant());
 

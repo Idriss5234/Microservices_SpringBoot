@@ -42,7 +42,7 @@ public class MicroServiceCommandeApplication {
 					1,                              // userId (example: 1 for the first user)
 					1,                            // panierId (example: 101 for a specific panier)
 					2,                              // quantité (example: 3 items)
-					new BigDecimal("19.99"),        // prix (example: price of the items)
+					19.99,        // prix (example: price of the items)
 					"En cours"                      // statut (example: "In progress")
 			));
 		};

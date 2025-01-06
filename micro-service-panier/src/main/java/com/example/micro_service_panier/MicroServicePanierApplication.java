@@ -29,7 +29,7 @@ public class MicroServicePanierApplication {
 					"Pommes, bananes",          // itemDetails
 					true,                                 // disponibilité
 					Timestamp.from(Instant.now()),                   // aRetirer
-					new BigDecimal("2.99"),              // prix
+					2.99,              // prix
 					10                                     // quantité
 			));
 		};
