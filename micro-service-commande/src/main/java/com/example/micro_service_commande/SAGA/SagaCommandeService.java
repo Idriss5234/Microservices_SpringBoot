@@ -24,8 +24,8 @@ public class SagaCommandeService {
      * Starts the Saga for processing Commande.
      */
     public void startCommandeSaga(int userId, int panierId, int requiredQuantity) {
-        System.out.println("Starting Commande Saga...");
-        Commande commande = new Commande();
+       System.out.println("Starting Commande Saga...");
+      /*   Commande commande = new Commande();
         commande.setUserId(userId);
         commande.setPanierId(panierId);
         commande.setQuantité(requiredQuantity);
@@ -34,33 +34,37 @@ public class SagaCommandeService {
         commande.setDate(new java.sql.Timestamp(System.currentTimeMillis()).toInstant());
 
         commande = commandeRepository.save(commande);
+*/
+        SagaMessage sagaMessage = new SagaMessage("success", panierId, requiredQuantity);
 
-        SagaMessage sagaMessage = new SagaMessage("PROCESS_COMMANDE", panierId, requiredQuantity);
-        rabbitTemplate.convertAndSend("saga-exchange", "commande-routing-key", sagaMessage);
+        rabbitTemplate.convertAndSend("saga-exchange", "api1-consumer-routing-key", sagaMessage);
     }
 
     /**
      * Handles the response from the Panier service.
      */
-    @RabbitListener(queues = "commande-api-get-consumer-queue")
+    @RabbitListener(queues = "api1-producer-queue")
     public void handleCommandeGetResponse(SagaMessage message) {
         System.out.println("Commande Get Response: " + message.getStatus());
-        if ("success".equals(message.getStatus())) {
+      /*  if ("success".equals(message.getStatus())) {
             System.out.println("Commande validated. Proceeding to update...");
-            rabbitTemplate.convertAndSend("saga-exchange", "panier-post-routing-key", new SagaMessage(
+            rabbitTemplate.convertAndSend("saga-exchange", "api2-consumer-routing-key", new SagaMessage(
                     "UPDATE_PANIER",
                     (int) message.getPanierId(),
                     message.getRequiredQte()
             ));
         } else {
             System.out.println("Commande validation failed.");
-        }
+        }*/
     }
 
     /**
      * Handles the final update in Commande service.
      */
-    @RabbitListener(queues = "commande-api-post-consumer-queue")
+
+
+    /*
+    @RabbitListener(queues = "api2-producer-queue")
     public void handleCommandePostResponse(SagaMessage message) {
         System.out.println("Commande Update Response: " + message.getStatus());
         if ("success".equals(message.getStatus())) {
@@ -75,5 +79,5 @@ public class SagaCommandeService {
         } else {
             System.out.println("Commande update failed.");
         }
-    }
+    }*/
 }

@@ -12,8 +12,8 @@ public class SagaMessage implements Serializable {
     private boolean dispo;      // Availability flag
 
     // Constructors
-    public SagaMessage(String status) {
-        this.status = status;
+
+    public SagaMessage() {
     }
 
     public SagaMessage(String status, int panierId, int requiredQte) {
@@ -31,7 +31,6 @@ public class SagaMessage implements Serializable {
     }
 
     // Getters and Setters
-
     public boolean isDispo() {
         return dispo;
     }
@@ -40,7 +39,7 @@ public class SagaMessage implements Serializable {
         this.dispo = dispo;
     }
 
-    public long getPanierId() {
+    public int getPanierId() {
         return panierId;
     }
 
@@ -72,15 +71,14 @@ public class SagaMessage implements Serializable {
         this.status = status;
     }
 
-
     @Override
     public String toString() {
         return "SagaMessage{" +
-                "dispo=" + dispo +
-                ", status='" + status + '\'' +
+                "status='" + status + '\'' +
                 ", panierId=" + panierId +
                 ", requiredQte=" + requiredQte +
                 ", qte=" + qte +
+                ", dispo=" + dispo +
                 '}';
     }
 }

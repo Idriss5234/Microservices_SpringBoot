@@ -6,6 +6,7 @@ import org.springframework.amqp.core.Exchange;
 import org.springframework.amqp.core.ExchangeBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.QueueBuilder;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -16,89 +17,93 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@EnableRabbit
 public class RabbitMQConfig {
 
+    // Bean de ConnectionFactory pour se connecter à RabbitMQ
     @Bean
     public ConnectionFactory connectionFactory() {
-        CachingConnectionFactory factory = new CachingConnectionFactory();
-        factory.setUsername("guest");
-        factory.setPassword("guest");
-        factory.setHost("localhost");  // Replace with your RabbitMQ server's host
-        factory.setPort(15672);         // Replace with your RabbitMQ server's port
-        return factory;
+        CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
+        connectionFactory.setHost("localhost");  // Adresse du serveur RabbitMQ
+        connectionFactory.setPort(5672);  // Port par défaut
+        connectionFactory.setUsername("guest");  // Nom d'utilisateur RabbitMQ
+        connectionFactory.setPassword("guest");  // Mot de passe RabbitMQ
+        return connectionFactory;
     }
 
+    // Bean RabbitTemplate configuré avec la ConnectionFactory
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
-        return new RabbitTemplate(connectionFactory);
+        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+        rabbitTemplate.setMessageConverter(converter());  // Utilisation du convertisseur JSON
+        return rabbitTemplate;
     }
 
-    // Declare the direct exchange
+    // Déclaration de l'échange direct
     @Bean
     public Exchange sagaExchange() {
         return ExchangeBuilder.directExchange("saga-exchange").build();
     }
 
-    // Message Converter for JSON
+    // Message Converter pour JSON
     @Bean
     public MessageConverter converter() {
         return new Jackson2JsonMessageConverter();
     }
 
-    // QUEUES
+    // Déclaration des queues
     @Bean
-    public Queue commandeApiGetProducerQueue() {
-        return QueueBuilder.durable("commande-api-get-producer-queue").build();
+    public Queue panierApiGetProducerQueue() {
+        return QueueBuilder.durable("api1-producer-queue").build();
     }
 
     @Bean
-    public Queue commandeApiGetConsumerQueue() {
-        return QueueBuilder.durable("commande-api-get-consumer-queue").build();
+    public Queue panierApiGetConsumerQueue() {
+        return QueueBuilder.durable("api1-consumer-queue").build();
     }
 
     @Bean
-    public Queue commandeApiPostProducerQueue() {
-        return QueueBuilder.durable("commande-api-post-producer-queue").build();
+    public Queue panierApiPostProducerQueue() {
+        return QueueBuilder.durable("api2-producer-queue").build();
     }
 
     @Bean
-    public Queue commandeApiPostConsumerQueue() {
-        return QueueBuilder.durable("commande-api-post-consumer-queue").build();
+    public Queue panierApiPostConsumerQueue() {
+        return QueueBuilder.durable("api2-consumer-queue").build();
+    }
+
+    // Binding des queues à l'échange
+    @Bean
+    public Binding panierApiGetProducerBinding() {
+        return BindingBuilder.bind(panierApiGetProducerQueue()).to(sagaExchange())
+                .with("api1-producer-routing-key").noargs();
     }
 
     @Bean
-    public Queue compensatePanierQueue() {
-        return QueueBuilder.durable("compensate-panier-queue").build();
-    }
-
-    // BINDING
-    @Bean
-    public Binding commandeApiGetProducerBinding() {
-        return BindingBuilder.bind(commandeApiGetProducerQueue()).to(sagaExchange())
-                .with("commande-api-get-producer-routing-key").noargs();
+    public Binding panierApiGetConsumerBinding() {
+        return BindingBuilder.bind(panierApiGetConsumerQueue()).to(sagaExchange())
+                .with("api1-consumer-routing-key").noargs();
     }
 
     @Bean
-    public Binding commandeApiGetConsumerBinding() {
-        return BindingBuilder.bind(commandeApiGetConsumerQueue()).to(sagaExchange())
-                .with("commande-api-get-consumer-routing-key").noargs();
+    public Binding panierApiPostProducerBinding() {
+        return BindingBuilder.bind(panierApiPostProducerQueue()).to(sagaExchange())
+                .with("api2-producer-routing-key").noargs();
     }
 
     @Bean
-    public Binding commandeApiPostProducerBinding() {
-        return BindingBuilder.bind(commandeApiPostProducerQueue()).to(sagaExchange())
-                .with("commande-api-post-producer-routing-key").noargs();
+    public Binding panierApiPostConsumerBinding() {
+        return BindingBuilder.bind(panierApiPostConsumerQueue()).to(sagaExchange())
+                .with("api2-consumer-routing-key").noargs();
+    }
+    @Bean
+    public Queue compensateApi1Queue() {
+        return QueueBuilder.durable("compensate-api1-queue").build();
     }
 
     @Bean
-    public Binding commandeApiPostConsumerBinding() {
-        return BindingBuilder.bind(commandeApiPostConsumerQueue()).to(sagaExchange())
-                .with("commande-api-post-consumer-routing-key").noargs();
+    public Queue compensateApi2Queue() {
+        return QueueBuilder.durable("compensate-api2-queue").build();
     }
 
-    @Bean
-    public Binding compensatePanierBinding() {
-        return BindingBuilder.bind(compensatePanierQueue()).to(sagaExchange())
-                .with("compensate-panier-routing-key").noargs();
-    }
 }

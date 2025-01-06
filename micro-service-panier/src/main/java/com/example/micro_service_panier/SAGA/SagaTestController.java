@@ -18,9 +18,9 @@ public class SagaTestController {
         this.sagaPanierService = sagaPanierService;
     }
 
-    @GetMapping("/{panierId}/{quantity}")
+   /* @GetMapping("/{panierId}/{quantity}")
     public ResponseEntity<String> testSaga(@PathVariable int panierId, @PathVariable int quantity) {
         sagaPanierService.startPanierSaga(panierId, quantity);
         return ResponseEntity.ok("Saga started for Panier ID: " + panierId);
-    }
+    }*/
 }
