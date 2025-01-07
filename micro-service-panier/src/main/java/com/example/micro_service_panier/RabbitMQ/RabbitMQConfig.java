@@ -66,7 +66,17 @@ public class RabbitMQConfig {
         return QueueBuilder.durable("api2-consumer-queue").build();
     }
 
+    @Bean
+    public Queue SuiviMssgQueue() {
+        return QueueBuilder.durable("suivie-message-queue").build();
+    }
+
     // Binding des queues à l'échange
+    @Bean
+    public Binding SuiviMssgQueueBinding() {
+        return BindingBuilder.bind(SuiviMssgQueue()).to(sagaExchange())
+                .with("suivi-message-queue-routing-key").noargs();
+    }
     @Bean
     public Binding panierApiGetProducerBinding() {
         return BindingBuilder.bind(panierApiGetProducerQueue()).to(sagaExchange())
@@ -90,6 +100,19 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(panierApiPostConsumerQueue()).to(sagaExchange())
                 .with("api2-consumer-routing-key").noargs();
     }
+
+    @Bean
+    public Binding compensateApi1Binding() {
+        return BindingBuilder.bind(compensateApi1Queue()).to(sagaExchange())
+                .with("compensate-api1-routing-key").noargs();
+    }
+
+    @Bean
+    public Binding compensateApi2Binding() {
+        return BindingBuilder.bind(compensateApi2Queue()).to(sagaExchange())
+                .with("compensate-api2-routing-key").noargs();}
+
+
     @Bean
     public Queue compensateApi1Queue() {
         return QueueBuilder.durable("compensate-api1-queue").build();

@@ -25,7 +25,7 @@ public class SagaCommandeService {
      * Starts the Saga for processing Commande.
      */
     public void startCommandeSaga(int userId, int panierId, int requiredQuantity) {
-       System.out.println("Starting Commande Saga...");
+        System.out.println("Starting Commande Saga...");
 
         Commande commande = new Commande();
         commande.setUserId(userID);
@@ -38,9 +38,13 @@ public class SagaCommandeService {
         Commande savedCommande = commandeRepository.save(commande);
         commandeID= Long.valueOf(savedCommande.getId());
         userID = userId;
-        SagaMessage sagaMessage = new SagaMessage("success", panierId, requiredQuantity,0.00);
+        SagaMessage sagaMessage = new SagaMessage("success", panierId, requiredQuantity);
 
         rabbitTemplate.convertAndSend("saga-exchange", "api1-consumer-routing-key", sagaMessage);
+
+        String suiviMessage = "Message envoyé à 'api1-consumer-queue': " + sagaMessage;
+
+        rabbitTemplate.convertAndSend("saga-exchange", "suivi-message-queue-routing-key", suiviMessage);
     }
 
     /**
@@ -50,13 +54,22 @@ public class SagaCommandeService {
     public void handleCommandeGetResponse(SagaMessage message) {
         System.out.println("Commande Get Response: " + message.getStatus());
         if ("success".equals(message.getStatus())) {
-            System.out.println("Commande validated. Proceeding to update...");
+            System.out.println("Panier exists. Proceeding to update...");
             rabbitTemplate.convertAndSend("saga-exchange", "api2-consumer-routing-key", new SagaMessage(
                     "UPDATE_PANIER",
                     (int) message.getPanierId(),
                     message.getRequiredQte(),
                     message.getPanierPrix()
             ));
+
+            String suiviMessage = "Message envoyé à 'api2-consumer-queue': " + new SagaMessage(
+                "UPDATE_PANIER",
+                (int) message.getPanierId(),
+                message.getRequiredQte(),
+                message.getPanierPrix()
+            );
+
+            rabbitTemplate.convertAndSend("saga-exchange", "suivi-message-queue-routing-key", suiviMessage);
         } else {
             System.out.println("Commande validation failed.");
         }
@@ -88,4 +101,43 @@ public class SagaCommandeService {
             System.out.println("Commande successfully updated.");
         }
     }
+
+
+
+    @RabbitListener(queues = "compensate-api1-queue")
+public void handleCompensateApi1Request(SagaMessage message) {
+    try {
+        System.out.println("Compensation initiated for missing Panier.");
+        Commande commande = commandeRepository.findById(commandeID).orElse(null);
+        if (commande != null) {
+            commande.setStatut("CANCELLED");
+            commandeRepository.save(commande);
+            System.out.println("Commande successfully cancelled as part of compensation.");
+        } else {
+            System.out.println("Commande not found for compensation.");
+        }
+    } catch (Exception e) {
+        System.out.println("Compensation process failed for API1: " + e.getMessage());
+    }
+}
+
+
+@RabbitListener(queues = "compensate-api2-queue")
+public void handleCompensateApi2Request(SagaMessage message) {
+    try {
+        System.out.println("Compensation initiated for invalid quantity.");
+        Commande commande = commandeRepository.findById(commandeID).orElse(null);
+        if (commande != null) {
+            commande.setStatut("CANCELLED");
+            commandeRepository.save(commande);
+            System.out.println("Commande successfully cancelled due to invalid Panier quantity.");
+        } else {
+            System.out.println("Commande not found for compensation.");
+        }
+    } catch (Exception e) {
+        System.out.println("Compensation process failed for API2: " + e.getMessage());
+    }
+}
+
+
 }
