@@ -30,6 +30,15 @@ public class SagaMessage implements Serializable {
 
     }
 
+    public SagaMessage(String status, int panierId, int requiredQte,double panierPrix, int qte) {
+        this.status = status;
+        this.panierId = panierId;
+        this.requiredQte = requiredQte;
+        this.panierPrix=panierPrix;
+        this.qte=qte;
+
+    }
+
     public SagaMessage(String status, int panierId, int requiredQte,double panierPrix) {
         this.status = status;
         this.panierId = panierId;
@@ -88,6 +97,7 @@ public class SagaMessage implements Serializable {
                 ", panierId=" + panierId +
                 ", requiredQte=" + requiredQte +
                 ", panierPrix=" + panierPrix +
+                ", qte=" + qte +
                 '}';
     }
 }
