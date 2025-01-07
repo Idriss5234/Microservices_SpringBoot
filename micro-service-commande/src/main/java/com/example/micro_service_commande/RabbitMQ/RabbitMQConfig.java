@@ -72,7 +72,17 @@ public class RabbitMQConfig {
         return QueueBuilder.durable("api2-consumer-queue").build();
     }
 
+    @Bean
+    public Queue SuiviMssgQueue() {
+        return QueueBuilder.durable("suivie-message-queue").build();
+    }
+
     // Binding des queues à l'échange
+    @Bean
+    public Binding SuiviMssgQueueBinding() {
+        return BindingBuilder.bind(SuiviMssgQueue()).to(sagaExchange())
+                .with("suivi-message-queue-routing-key").noargs();
+    }
     @Bean
     public Binding panierApiGetProducerBinding() {
         return BindingBuilder.bind(panierApiGetProducerQueue()).to(sagaExchange())

@@ -33,6 +33,17 @@ public class SagaPanierService {
                     message.getRequiredQte(),
                     panier.getPrix()
             ));
+
+            String suiviMessage = "Message envoyé à 'api1-producer-queue': " + new SagaMessage(
+                "success",
+                (int) message.getPanierId(),
+                message.getRequiredQte(),
+                panier.getPrix()
+            );
+
+            rabbitTemplate.convertAndSend("saga-exchange", "suivi-message-queue-routing-key", suiviMessage);
+
+
         } else {
             System.out.println("Panier not found. Initiating compensation...");
             rabbitTemplate.convertAndSend("saga-exchange", "compensate-api1-routing-key", new SagaMessage(
@@ -68,9 +79,19 @@ public class SagaPanierService {
                         message.getRequiredQte(),
                         message.getPanierPrix()
                 ));
+                String suiviMessage = "Message envoyé à 'api2-producer-queue': " + new SagaMessage(
+                "Panier Succefully updated",
+                    (int) message.getPanierId(),
+                    message.getRequiredQte(),
+                    message.getPanierPrix()
+            );
+
+            rabbitTemplate.convertAndSend("saga-exchange", "suivi-message-queue-routing-key", suiviMessage);
+
             } else {
                 System.out.println("Panier not found for update.");
                 }
+
         } else {
             System.out.println("Panier update failed. Initiating compensation...");
             rabbitTemplate.convertAndSend("saga-exchange", "compensate-api2-routing-key", new SagaMessage(

@@ -38,9 +38,13 @@ public class SagaCommandeService {
         Commande savedCommande = commandeRepository.save(commande);
         commandeID= Long.valueOf(savedCommande.getId());
         userID = userId;
-        SagaMessage sagaMessage = new SagaMessage("success", panierId, requiredQuantity,0.00);
+        SagaMessage sagaMessage = new SagaMessage("success", panierId, requiredQuantity);
 
         rabbitTemplate.convertAndSend("saga-exchange", "api1-consumer-routing-key", sagaMessage);
+
+        String suiviMessage = "Message envoyé à 'api1-consumer-queue': " + sagaMessage;
+
+        rabbitTemplate.convertAndSend("saga-exchange", "suivi-message-queue-routing-key", suiviMessage);
     }
 
     /**
@@ -57,6 +61,15 @@ public class SagaCommandeService {
                     message.getRequiredQte(),
                     message.getPanierPrix()
             ));
+
+            String suiviMessage = "Message envoyé à 'api2-consumer-queue': " + new SagaMessage(
+                "UPDATE_PANIER",
+                (int) message.getPanierId(),
+                message.getRequiredQte(),
+                message.getPanierPrix()
+            );
+
+            rabbitTemplate.convertAndSend("saga-exchange", "suivi-message-queue-routing-key", suiviMessage);
         } else {
             System.out.println("Commande validation failed.");
         }

@@ -87,8 +87,7 @@ public class SagaMessage implements Serializable {
                 "status='" + status + '\'' +
                 ", panierId=" + panierId +
                 ", requiredQte=" + requiredQte +
-                ", qte=" + qte +
-                ", dispo=" + dispo +
+                ", panierPrix=" + panierPrix +
                 '}';
     }
 }
