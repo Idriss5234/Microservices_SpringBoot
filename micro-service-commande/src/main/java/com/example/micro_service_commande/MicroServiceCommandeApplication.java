@@ -37,7 +37,7 @@ public class MicroServiceCommandeApplication {
 			Instant tomorrowAt14Instant = tomorrowAt14.atZone(ZoneId.systemDefault())  // Convert to the system default timezone
 					.toInstant();
 
-			repository.save(new Commande(
+			/*repository.save(new Commande(
 					tomorrowAt14Instant,            // date set to tomorrow at 14:00
 					1,                              // userId (example: 1 for the first user)
 					1,                            // panierId (example: 101 for a specific panier)
@@ -45,6 +45,6 @@ public class MicroServiceCommandeApplication {
 					19.99,        // prix (example: price of the items)
 					"En cours"                      // statut (example: "In progress")
 			)
-			);
+			);*/
 		};
 }}

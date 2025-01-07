@@ -38,7 +38,7 @@ public class SagaCommandeService {
         Commande savedCommande = commandeRepository.save(commande);
         commandeID= Long.valueOf(savedCommande.getId());
         userID = userId;
-        SagaMessage sagaMessage = new SagaMessage("success", panierId, requiredQuantity);
+        SagaMessage sagaMessage = new SagaMessage("Commande successfully created", panierId, requiredQuantity);
 
         rabbitTemplate.convertAndSend("saga-exchange", "api1-consumer-routing-key", sagaMessage);
 
@@ -53,20 +53,22 @@ public class SagaCommandeService {
     @RabbitListener(queues = "api1-producer-queue")
     public void handleCommandeGetResponse(SagaMessage message) {
         System.out.println("Commande Get Response: " + message.getStatus());
-        if ("success".equals(message.getStatus())) {
-            System.out.println("Commande validated. Proceeding to update...");
+        
+        if ("Panier exists".equals(message.getStatus())) {
+            System.out.println("Panier exists. Proceeding to update...");
             rabbitTemplate.convertAndSend("saga-exchange", "api2-consumer-routing-key", new SagaMessage(
-                    "UPDATE_PANIER",
+                    "Update panier starting...",
                     (int) message.getPanierId(),
                     message.getRequiredQte(),
                     message.getPanierPrix()
             ));
 
             String suiviMessage = "Message envoyé à 'api2-consumer-queue': " + new SagaMessage(
-                "UPDATE_PANIER",
+                "Update panier starting...",
                 (int) message.getPanierId(),
                 message.getRequiredQte(),
                 message.getPanierPrix()
+                
             );
 
             rabbitTemplate.convertAndSend("saga-exchange", "suivi-message-queue-routing-key", suiviMessage);
@@ -92,7 +94,8 @@ public class SagaCommandeService {
                 commande.setPrix(message.getPanierPrix()*message.getRequiredQte());
 
             commandeRepository.save(commande);
-                System.out.println("Commande successfully updated.");
+            System.out.println("Commande successfully updated and commande prix = " + commande.getPrix());
+
         } else {
             System.out.println("Commande update failed.");
             Commande commande = commandeRepository.findById(commandeID).orElse(null);

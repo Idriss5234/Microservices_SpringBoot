@@ -24,21 +24,24 @@ public class SagaPanierService {
     public void handlePanierGetResponse(SagaMessage message) {
         System.out.println("Panier Check Response: " + message.getStatus());
         Panier panier= panierRepository.findById(message.getPanierId()).orElse(null);
-        if ("success".equals(message.getStatus()) && panier!=null) {
+        if ("Commande successfully created".equals(message.getStatus()) && panier!=null) {
             System.out.println("Panier exists. Proceeding to Commande...");
             System.out.println("Panier prix: "+panier.getPrix() );
             rabbitTemplate.convertAndSend("saga-exchange", "api1-producer-routing-key", new SagaMessage(
-                    "success",
+                    "Panier exists",
                     (int) message.getPanierId(),
                     message.getRequiredQte(),
-                    panier.getPrix()
+                    panier.getPrix(),
+                    panier.getQuantité()
+                    
             ));
 
             String suiviMessage = "Message envoyé à 'api1-producer-queue': " + new SagaMessage(
-                "success",
+                "Panier exists",
                 (int) message.getPanierId(),
                 message.getRequiredQte(),
-                panier.getPrix()
+                panier.getPrix(),
+                panier.getQuantité()
             );
 
             rabbitTemplate.convertAndSend("saga-exchange", "suivi-message-queue-routing-key", suiviMessage);
@@ -67,23 +70,25 @@ public class SagaPanierService {
     public void handlePanierPostResponse(SagaMessage message) {
         Panier panier = panierRepository.findById(message.getPanierId()).orElse(null);
         System.out.println("Panier Update Response: " + message.getStatus()+panier.getQuantité()+ message.getRequiredQte());
-        if ("UPDATE_PANIER".equals(message.getStatus()) && (panier.getQuantité() > message.getRequiredQte())) {
+        if ("Update panier starting...".equals(message.getStatus()) && (panier.getQuantité() >= message.getRequiredQte())) {
             System.out.println("Updating Panier in the database...");
             if (panier != null) {
                 panier.setQuantité(panier.getQuantité() - message.getRequiredQte());
                 panierRepository.save(panier);
-                System.out.println("Panier successfully updated. Saga completed.");
+                System.out.println("Panier successfully updated.");
                 rabbitTemplate.convertAndSend("saga-exchange", "api2-producer-routing-key", new SagaMessage(
                         "Panier Succefully updated",
                         (int) message.getPanierId(),
                         message.getRequiredQte(),
-                        message.getPanierPrix()
+                        message.getPanierPrix(),
+                        panier.getQuantité()
                 ));
                 String suiviMessage = "Message envoyé à 'api2-producer-queue': " + new SagaMessage(
                 "Panier Succefully updated",
                     (int) message.getPanierId(),
                     message.getRequiredQte(),
-                    message.getPanierPrix()
+                    message.getPanierPrix(),
+                    panier.getQuantité()
             );
 
             rabbitTemplate.convertAndSend("saga-exchange", "suivi-message-queue-routing-key", suiviMessage);
