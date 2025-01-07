@@ -2,15 +2,19 @@ package com.example.micro_service_panier;
 
 import com.example.micro_service_panier.Model.Panier;
 import com.example.micro_service_panier.Repository.PanierRepository;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.Instant;
 
 @SpringBootApplication
+@EnableRabbit  // Enable RabbitMQ support
+
 public class MicroServicePanierApplication {
 
 	public static void main(String[] args) {
@@ -21,12 +25,12 @@ public class MicroServicePanierApplication {
 	ApplicationRunner start(PanierRepository repository) {
 		return args -> {
 			repository.save(new Panier(
-					"Fruits et légumes",                  // nomPanier
-					"Pommes, bananes, carottes",          // itemDetails
+					"Fruits ",                  // nomPanier
+					"Pommes, bananes",          // itemDetails
 					true,                                 // disponibilité
-					Instant.now(),                        // aRetirer
-					new BigDecimal("4.99"),              // prix
-					5                                     // quantité
+					Timestamp.from(Instant.now()),                   // aRetirer
+					2.99,              // prix
+					10                                     // quantité
 			));
 		};
 }}

@@ -2,6 +2,7 @@ package com.example.micro_service_commande;
 
 import com.example.micro_service_commande.Model.Commande;
 import com.example.micro_service_commande.Repository.CommandeRepository;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,6 +14,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 @SpringBootApplication
+@EnableRabbit  // Enable RabbitMQ support
+
 public class MicroServiceCommandeApplication {
 
 	public static void main(String[] args) {
@@ -37,9 +40,9 @@ public class MicroServiceCommandeApplication {
 			repository.save(new Commande(
 					tomorrowAt14Instant,            // date set to tomorrow at 14:00
 					1,                              // userId (example: 1 for the first user)
-					101,                            // panierId (example: 101 for a specific panier)
-					3,                              // quantité (example: 3 items)
-					new BigDecimal("19.99"),        // prix (example: price of the items)
+					1,                            // panierId (example: 101 for a specific panier)
+					2,                              // quantité (example: 3 items)
+					19.99,        // prix (example: price of the items)
 					"En cours"                      // statut (example: "In progress")
 			));
 		};
