@@ -23,14 +23,19 @@ public class SagaTestController {
         // Fetch user from User microservice
         String userUrl = "http://localhost:8090/Utilisateurs/" + userId;
         ResponseEntity<String> userResponse = restTemplate.getForEntity(userUrl, String.class);
+        System.out.println(userResponse);
+        System.out.println(userResponse.getHeaders().getContentLength());
 
-        if (userResponse.getStatusCode().is2xxSuccessful()) {
+
+        if (userResponse.getHeaders().getContentLength() != 0) {
             // User exists, proceed with the saga
             sagaCommandeService.startCommandeSaga(userId, panierId, quantity);
             return ResponseEntity.ok("Saga started for Panier ID: " + panierId);
         } else {
+            System.out.println("User not found");
             // User not found or error occurred
             return ResponseEntity.status(userResponse.getStatusCode()).body("Error: " + userResponse.getBody());
+            
         }
     }
 }

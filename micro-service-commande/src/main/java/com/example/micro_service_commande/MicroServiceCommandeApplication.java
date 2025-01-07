@@ -44,6 +44,7 @@ public class MicroServiceCommandeApplication {
 					2,                              // quantité (example: 3 items)
 					19.99,        // prix (example: price of the items)
 					"En cours"                      // statut (example: "In progress")
-			));
+			)
+			);
 		};
 }}
