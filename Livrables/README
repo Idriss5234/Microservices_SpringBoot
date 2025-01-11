@@ -1,0 +1,160 @@
+# Microservices avec RabbitMQ et Processus Saga
+
+Ce projet met en œuvre une architecture de microservices comprenant quatre services principaux : **Utilisateur**, **Panier**, **Commande**, et **Paiement**. La communication entre les services **Panier** et **Commande** est implémentée à l'aide de RabbitMQ et d'un processus Saga pour la gestion des transactions distribuées.
+
+---
+
+## 📋 Sommaire
+
+1. [Outils et versions](#outils-et-versions)
+2. [Architecture](#architecture)
+3. [Installation](#installation)
+4. [Configuration](#configuration)
+5. [Exécution du projet](#exécution-du-projet)
+6. [Tests](#tests)
+7. [Contribuer](#contribuer)
+
+---
+
+## 🛠️ Outils et versions
+
+Voici la liste des outils utilisés dans ce projet avec leurs versions exactes :
+
+- **Java** : OpenJDK 17
+- **Spring Boot** : 2.7.5
+- **Docker** : 26.0.0
+- **MySQL** : 8.0.40 (MySQL Community Server - GPL)
+- **Maven** : 3.9.8
+  
+---
+
+## ⚙️ Architecture
+
+Ce projet comprend quatre microservices interconnectés :
+1. **Utilisateur** : Gestion des utilisateurs et des authentifications.
+2. **Panier** : Gestion des articles ajoutés au panier par les utilisateurs.
+3. **Commande** : Gestion des commandes passées par les utilisateurs.
+4. **Paiement** : Gestion des paiements associés aux commandes.
+
+### Communication entre services
+
+- **RabbitMQ** est utilisé pour échanger des messages entre les microservices. 
+- La communication Saga est utilisée entre les services **Panier** et **Commande** pour garantir la cohérence des transactions. 
+
+### Files d'attente RabbitMQ
+
+Les files suivantes sont configurées :
+- `api1-consumer-queue`
+- `api1-producer-queue`
+- `api2-consumer-queue` 
+- `api2-producer-queue` 
+
+### Gestion des transactions Saga
+
+1. **Début de Saga** : Lorsque l'utilisateur passe une commande, un message est envoyé via RabbitMQ pour initier le processus.
+2. **Étapes intermédiaires** :
+   - Le service Panier vérifie les articles disponibles.
+   - Le service Commande vérifie les détails de la commande et prépare les données pour le paiement.
+3. **Compensation** : Si une étape échoue, des actions compensatoires sont déclenchées pour annuler les opérations déjà effectuées.
+
+---
+
+## 🚀 Installation
+
+### Prérequis
+
+1. Installer **Java 11** ou une version supérieure.
+2. Installer **Docker**.
+3. Installer **Maven**.
+3. Installer **Spring boot**.
+4. Installer **MySQL 8.0.40**.
+
+### Étapes
+
+1. Clonez ce dépôt :
+
+   git clone https://github.com/Idriss5234/Microservices_SpringBoot.git
+   cd Microservices_SpringBoot
+
+2. Construisez les microservices avec Maven :
+
+mvn clean install
+
+3. Configurez la base de données MySQL pour chaque service. Exemple de création d'une base pour le service Panier :
+  
+CREATE DATABASE panier_db;
+
+---
+
+## 🔧 Configuration
+
+### Fichiers de configuration
+Chaque microservice possède son propre fichier `application.yml`. Voici un exemple pour le service Panier :
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/panier_db
+    username: root
+    password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+server:
+  port: 8081
+
+### Assurez-vous que les variables suivantes sont définies pour tous les services :
+
+SPRING_DATASOURCE_URL
+SPRING_DATASOURCE_USERNAME
+SPRING_DATASOURCE_PASSWORD
+
+---
+
+## ▶️ Exécution du projet
+  
+1. Démarrez RabbitMQ (si non lancé avec Docker) :
+
+docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
+  
+2. Lancez chaque microservice :
+
+cd mico-service-panier
+mvn spring-boot:run
+
+cd mico-service-commande
+mvn spring-boot:run
+
+cd mico-service-utilisateur
+mvn spring-boot:run
+  
+3. Accédez à RabbitMQ Management UI : http://localhost:15672
+
+Identifiants par défaut : guest / guest
+
+---
+
+## 🧪 Tests
+  
+### Tests manuels avec Postman
+
+Scénarios disponibles :
+  
+1. Effectuez les tests pour vérifier les fonctionnalités principales (CRUD)
+2. Testez les scénarios Saga :
+  Succès : Simulez un workflow complet où tous les services fonctionnent correctement.
+  Échec : Simulez un échec dans l'un des services (exemple : rupture de stock dans Panier) et observez les actions compensatoires.
+
+### Vérification avec RabbitMQ
+
+Connectez-vous à l'interface de RabbitMQ : http://localhost:15672.
+Surveillez les messages dans les files d'attente pour confirmer que les communications entre services fonctionnent correctement.
+
+
