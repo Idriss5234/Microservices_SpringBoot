@@ -24,7 +24,7 @@ public class MicroServiceCommandeApplication {
 
 	@Bean
 	ApplicationRunner start(CommandeRepository repository) {
-		return args -> {
+		return args -> { /*
 			// Get tomorrow's date at 14:00 par exmple
 			LocalDateTime tomorrowAt14 = LocalDateTime.now()
 					.plusDays(1)              // Add one day to the current date

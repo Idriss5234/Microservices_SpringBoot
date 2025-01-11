@@ -24,13 +24,13 @@ public class MicroServicePanierApplication {
 	@Bean
 	ApplicationRunner start(PanierRepository repository) {
 		return args -> {
-			/*repository.save(new Panier(
-					"Fruits ",                  // nomPanier
-					"Pommes, bananes",          // itemDetails
+			repository.save(new Panier(
+					"Patisserie ",                  // nomPanier
+					"Pain, tartes, croissants",          // itemDetails
 					true,                                 // disponibilité
 					Timestamp.from(Instant.now()),                   // aRetirer
-					2.99,              // prix
-					10                                     // quantité
-			));*/
+					3.49,              // prix
+					8                                     // quantité
+			));
 		};
 }}
