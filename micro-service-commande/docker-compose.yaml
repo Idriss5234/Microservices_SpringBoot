@@ -1,0 +1,31 @@
+version: "3.8"
+
+services:
+  mysql:
+    container_name: mysql2
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root2
+      MYSQL_DATABASE: commande
+      MYSQL_USER: root2
+      MYSQL_PASSWORD: root2
+    ports:
+      - "3307:3306" # Mapping 3306 inside the container to 3307 on the host
+    networks:
+      - micro-services
+    volumes:
+      - ./commande_dump.sql:/docker-entrypoint-initdb.d/commande_dump.sql
+
+  commande:
+    image: idriss5234/ms_commande
+    container_name: commande
+    restart: always
+    ports:
+      - "8092:8092"
+    networks:
+      - micro-services
+
+networks:
+  micro-services:
+    external: true

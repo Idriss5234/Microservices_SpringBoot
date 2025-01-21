@@ -1,0 +1,30 @@
+version: "3.8"
+services:
+  mysql3:
+    image: mysql:latest
+    container_name: mysql3
+    restart: always
+    ports:
+      - "3006:3008"
+    environment:
+      MYSQL_ROOT_PASSWORD: root3
+      MYSQL_DATABASE: panier
+      MYSQL_USER: root3
+      MYSQL_PASSWORD: root3
+    networks:
+      - micro-services
+    volumes:
+      - ./panier_dump.sql:/docker-entrypoint-initdb.d/panier_dump.sql
+
+  panier:
+    image: idriss5234/ms_panier
+    container_name: panier
+    restart: always
+    ports:
+      - "8091:8091"
+    networks:
+      - micro-services
+
+networks:
+  micro-services:
+    external: true

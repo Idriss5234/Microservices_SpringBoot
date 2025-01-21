@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  mysql1:
+    image: mysql:latest
+    container_name: mysql1
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root1
+      MYSQL_DATABASE: MPA
+      MYSQL_USER: root1
+      MYSQL_PASSWORD: root1
+    ports:
+      - "3306:3306"
+    networks:
+      - micro-services
+    volumes:
+      - ./utilisateur_dump.sql:/docker-entrypoint-initdb.d/utilisateur_dump.sql
+    command: --init-file /docker-entrypoint-initdb.d/utilisateur_dump.sql
+
+  utilisateur:
+    image: idriss5234/ms_utilisateur
+    container_name: utilisateur
+    restart: always
+    ports:
+      - "8090:8090"
+    networks:
+      - micro-services
+
+networks:
+  micro-services:
+    external: true
