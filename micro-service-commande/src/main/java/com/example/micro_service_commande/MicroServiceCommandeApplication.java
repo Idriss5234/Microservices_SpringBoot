@@ -7,7 +7,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-
+import org.springframework.cache.annotation.EnableCaching;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -15,6 +15,8 @@ import java.time.ZoneId;
 
 @SpringBootApplication
 @EnableRabbit  // Enable RabbitMQ support
+@EnableCaching
+
 
 public class MicroServiceCommandeApplication {
 

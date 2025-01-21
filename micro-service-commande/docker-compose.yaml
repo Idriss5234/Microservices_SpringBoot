@@ -25,6 +25,8 @@ services:
       - "8092:8092"
     networks:
       - micro-services
+    depends_on:
+      - mysql
 
 networks:
   micro-services:

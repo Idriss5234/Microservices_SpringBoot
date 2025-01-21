@@ -6,6 +6,7 @@ import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 
 import java.math.BigDecimal;
@@ -14,6 +15,8 @@ import java.time.Instant;
 
 @SpringBootApplication
 @EnableRabbit  // Enable RabbitMQ support
+@EnableCaching
+
 
 public class MicroServicePanierApplication {
 

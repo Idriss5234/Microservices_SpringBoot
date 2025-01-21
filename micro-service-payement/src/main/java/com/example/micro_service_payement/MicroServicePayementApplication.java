@@ -5,12 +5,15 @@ import com.example.micro_service_payement.Repository.PayementRepository;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 
 @SpringBootApplication
+@EnableCaching
+
 public class MicroServicePayementApplication {
 
 	public static void main(String[] args) {

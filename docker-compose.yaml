@@ -9,6 +9,14 @@ services:
       - "5672:5672"
     networks:
       - micro-services
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - micro-services
+
 networks:
   micro-services:
     name: micro-services
