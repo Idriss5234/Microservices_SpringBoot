@@ -17,7 +17,7 @@ services:
       - ./panier_dump.sql:/docker-entrypoint-initdb.d/panier_dump.sql
 
   panier:
-    image: idriss5234/ms_panier
+    image: idriss5234/ms_panier:latest
     container_name: panier
     restart: always
     ports:

@@ -21,7 +21,7 @@ public class SagaTestController {
     @GetMapping("{userId}/{panierId}/{quantity}")
     public ResponseEntity<String> testSaga(@PathVariable int userId, @PathVariable int panierId, @PathVariable int quantity) {
         // Fetch user from User microservice
-        String userUrl = "http://localhost:8090/Utilisateurs/" + userId;
+        String userUrl = "http://utilisateur:8090/Utilisateurs/" + userId;
         ResponseEntity<String> userResponse = restTemplate.getForEntity(userUrl, String.class);
         System.out.println(userResponse);
         System.out.println(userResponse.getHeaders().getContentLength());
