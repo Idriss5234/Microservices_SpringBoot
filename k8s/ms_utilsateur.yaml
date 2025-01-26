@@ -1,0 +1,210 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: micro-services
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-credentials
+  namespace: micro-services
+type: Opaque
+data:
+  db_username: cm9vdA==
+  # Base64 for "root"
+  db_password: cm9vdDE= # Base64 for "root1"
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql1
+  namespace: micro-services
+spec:
+  serviceName: mysql1
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mysql1
+  template:
+    metadata:
+      labels:
+        app: mysql1
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:latest
+          ports:
+            - containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: db_password
+            - name: MYSQL_USER # Add the new user to create
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: db_username # root1 user from secret
+            - name: MYSQL_PASSWORD # Set password for root1 user
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: db_password # Password for root1 user
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql
+            - name: sql-scripts
+              mountPath: /docker-entrypoint-initdb.d
+      volumes:
+        - name: sql-scripts
+          configMap:
+            name: mysql-init-scripts
+  volumeClaimTemplates:
+    - metadata:
+        name: mysql-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 10Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-init-scripts
+  namespace: micro-services
+data:
+  utilisateur_dump.sql: |
+    CREATE DATABASE IF NOT EXISTS MPA;
+    USE MPA;
+    DROP TABLE IF EXISTS `utilisateur`;
+    /*!40101 SET @saved_cs_client     = @@character_set_client */;
+    /*!50503 SET character_set_client = utf8mb4 */;
+    CREATE TABLE `utilisateur` (
+      `id` int NOT NULL AUTO_INCREMENT,
+      `nom` varchar(100) NOT NULL,
+      `prenom` varchar(100) NOT NULL,
+      `email` varchar(100) NOT NULL,
+      `motdepasse` varchar(100) NOT NULL,
+      `num_compte` varchar(100) NOT NULL,
+      PRIMARY KEY (`id`),
+      UNIQUE KEY `email` (`email`),
+      UNIQUE KEY `motdepasse` (`motdepasse`),
+      UNIQUE KEY `num_compte` (`num_compte`)
+    ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+    /*!40101 SET character_set_client = @saved_cs_client */;
+    --
+    -- Dumping data for table `utilisateur`
+    --
+    LOCK TABLES `utilisateur` WRITE;
+    /*!40000 ALTER TABLE `utilisateur` DISABLE KEYS */;
+    INSERT INTO `utilisateur` VALUES (1,'Krima','Idriss','idriss@gmail.com','123456789','A123685'),(2,'Mouilly','Fatima Ezzahrae','mouilly@gmail.com','5555','A4554484');
+    /*!40000 ALTER TABLE `utilisateur` ENABLE KEYS */;
+    UNLOCK TABLES;
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql1
+  namespace: micro-services
+spec:
+  selector:
+    app: mysql1
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq
+  namespace: micro-services
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      containers:
+        - name: rabbitmq
+          image: rabbitmq:3-management
+          ports:
+            - containerPort: 15672
+            - containerPort: 5672
+          env:
+            - name: RABBITMQ_DEFAULT_USER
+              value: guest
+            - name: RABBITMQ_DEFAULT_PASS
+              value: guest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq
+  namespace: micro-services
+spec:
+  selector:
+    app: rabbitmq
+  ports:
+    - protocol: TCP
+      port: 15672
+      targetPort: 15672
+      name: port1
+    - protocol: TCP
+      port: 5672
+      targetPort: 5672
+      name: port2
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-utilisateur
+  namespace: micro-services
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ms-utilisateur
+  template:
+    metadata:
+      labels:
+        app: ms-utilisateur
+    spec:
+      containers:
+        - name: utilisateur
+          image: idriss5234/ms_utilisateur:latest
+          ports:
+            - containerPort: 8090
+          env:
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: db_username # root1 user from secret
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: db_password # root1 password from secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-utilisateur
+  namespace: micro-services
+spec:
+  selector:
+    app: ms-utilisateur
+  ports:
+    - protocol: TCP
+      port: 8090
+      targetPort: 8090
+  type: NodePort

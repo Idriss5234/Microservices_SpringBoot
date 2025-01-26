@@ -18,6 +18,9 @@
 --
 -- Table structure for table `utilisateur`
 --
+--CREATE USER 'root1'@'%' IDENTIFIED BY 'root1';
+--GRANT ALL PRIVILEGES ON *.* TO 'root1'@'%' WITH GRANT OPTION;
+--FLUSH PRIVILEGES;
 
 CREATE DATABASE IF NOT EXISTS MPA;
 
