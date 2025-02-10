@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: mysql1
+  name: mysql3
   namespace: micro-services
 spec:
-  serviceName: mysql1
+  serviceName: mysql3
   replicas: 2
   selector:
     matchLabels:
-      app: mysql1
+      app: mysql3
   template:
     metadata:
       labels:
-        app: mysql1
+        app: mysql3
     spec:
       containers:
-        - name: mysql
-          image: mysql:latest
+        - name: mysql3
+          image: mysql:9
           ports:
             - containerPort: 3306
           env:
@@ -25,11 +25,6 @@ spec:
                 secretKeyRef:
                   name: db-credentials
                   key: db_password
-            - name: MYSQL_USER # Add the new user to create
-              valueFrom:
-                secretKeyRef:
-                  name: db-credentials
-                  key: db_username # root1 user from secret
             - name: MYSQL_PASSWORD # Set password for root1 user
               valueFrom:
                 secretKeyRef:
@@ -38,12 +33,12 @@ spec:
           volumeMounts:
             - name: mysql-data
               mountPath: /var/lib/mysql
-            - name: sql-scripts
+            - name: sql-scripts3
               mountPath: /docker-entrypoint-initdb.d
       volumes:
-        - name: sql-scripts
+        - name: sql-scripts3
           configMap:
-            name: mysql-init-scripts
+            name: mysql-init-scripts3
   volumeClaimTemplates:
     - metadata:
         name: mysql-data
@@ -56,45 +51,42 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: mysql-init-scripts
+  name: mysql-init-scripts3
   namespace: micro-services
 data:
-  utilisateur_dump.sql: |
-    CREATE DATABASE IF NOT EXISTS MPA;
-    USE MPA;
-    DROP TABLE IF EXISTS `utilisateur`;
-    /*!40101 SET @saved_cs_client     = @@character_set_client */;
-    /*!50503 SET character_set_client = utf8mb4 */;
-    CREATE TABLE `utilisateur` (
-      `id` int NOT NULL AUTO_INCREMENT,
-      `nom` varchar(100) NOT NULL,
-      `prenom` varchar(100) NOT NULL,
-      `email` varchar(100) NOT NULL,
-      `motdepasse` varchar(100) NOT NULL,
-      `num_compte` varchar(100) NOT NULL,
-      PRIMARY KEY (`id`),
-      UNIQUE KEY `email` (`email`),
-      UNIQUE KEY `motdepasse` (`motdepasse`),
-      UNIQUE KEY `num_compte` (`num_compte`)
-    ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-    /*!40101 SET character_set_client = @saved_cs_client */;
-    --
-    -- Dumping data for table `utilisateur`
-    --
-    LOCK TABLES `utilisateur` WRITE;
-    /*!40000 ALTER TABLE `utilisateur` DISABLE KEYS */;
-    INSERT INTO `utilisateur` VALUES (1,'Krima','Idriss','idriss@gmail.com','123456789','A123685'),(2,'Mouilly','Fatima Ezzahrae','mouilly@gmail.com','5555','A4554484');
-    /*!40000 ALTER TABLE `utilisateur` ENABLE KEYS */;
-    UNLOCK TABLES;
+  commande_dump.sql: |
+    CREATE DATABASE IF NOT EXISTS `panier` ;
+    USE `panier`;
+
+     DROP TABLE IF EXISTS `panier`;
+     CREATE TABLE `panier` (
+       `id` int NOT NULL AUTO_INCREMENT,
+       `item_details` tinytext NOT NULL,
+      `disponibilité` tinyint(1) DEFAULT NULL,
+      `quantité` int NOT NULL,
+       `prix` double NOT NULL,
+       `a_retirer` timestamp NULL DEFAULT NULL,
+       `nom_panier` varchar(255) DEFAULT NULL,
+       PRIMARY KEY (`id`)
+     ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+     
+
+
+     LOCK TABLES `panier` WRITE;
+
+     INSERT INTO `panier` VALUES (1,'Pommes, bananes',1,6,2.99,'2025-01-04 14:48:24','Fruits '),(2,'Pain, tartes, croissants',1,8,3.49,'2025-01-11 14:43:49','Patisserie ');
+
+     UNLOCK TABLES;
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysql1
+  name: mysql3
   namespace: micro-services
 spec:
   selector:
-    app: mysql1
+    app: mysql3
   ports:
     - protocol: TCP
       port: 3306
@@ -105,23 +97,23 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ms-utilisateur
+  name: ms-panier
   namespace: micro-services
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ms-utilisateur
+      app: ms-panier
   template:
     metadata:
       labels:
-        app: ms-utilisateur
+        app: ms-panier
     spec:
       containers:
-        - name: utilisateur
-          image: idriss5234/ms_utilisateur:latest
+        - name: panier
+          image: idriss5234/ms_panier:latest
           ports:
-            - containerPort: 8090
+            - containerPort: 8091
           env:
             - name: DB_USERNAME
               valueFrom:
@@ -137,13 +129,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: ms-utilisateur
+  name: ms-panier
   namespace: micro-services
 spec:
   selector:
-    app: ms-utilisateur
+    app: ms-panier
   ports:
     - protocol: TCP
-      port: 8090
-      targetPort: 8090
+      port: 8091
+      targetPort: 8091
   type: NodePort
