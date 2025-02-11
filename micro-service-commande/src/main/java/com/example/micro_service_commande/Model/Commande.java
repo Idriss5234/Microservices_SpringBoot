@@ -31,7 +31,6 @@ public class Commande {
     @Column(name = "prix", nullable = false)
     private double prix;
 
-    @ColumnDefault("'Pending'")
     @Column(name = "statut", length = 50)
     private String statut;
 
