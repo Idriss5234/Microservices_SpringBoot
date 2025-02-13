@@ -1,16 +1,16 @@
 version: "3.8"
 services:
   mysql3:
-    image: mysql:latest
+    image: mysql:8.4.4
     container_name: mysql3
     restart: always
     ports:
-      - "3006:3008"
+      - "3308:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: root3
-      MYSQL_DATABASE: panier
-      MYSQL_USER: root3
-      MYSQL_PASSWORD: root3
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     networks:
       - micro-services
     volumes:
@@ -20,10 +20,17 @@ services:
     image: idriss5234/ms_panier:latest
     container_name: panier
     restart: always
+    environment:
+      DB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     ports:
-      - "8091:8091"
+      - "9091:8091"
     networks:
       - micro-services
+    depends_on:
+      - mysql3
 
 networks:
   micro-services:

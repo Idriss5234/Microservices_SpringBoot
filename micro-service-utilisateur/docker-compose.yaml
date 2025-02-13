@@ -2,14 +2,14 @@ version: "3.8"
 
 services:
   mysql1:
-    image: mysql:latest
+    image: mysql:8.4.4
     container_name: mysql1
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root1
-      MYSQL_DATABASE: MPA
-      MYSQL_USER: root1
-      MYSQL_PASSWORD: root1
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     ports:
       - "3306:3306"
     networks:
@@ -19,26 +19,21 @@ services:
     command: --init-file /docker-entrypoint-initdb.d/utilisateur_dump.sql
 
   utilisateur:
-    image: idriss5234/ms_utilisateur
+    image: idriss5234/ms_utilisateur:latest
     container_name: utilisateur
     restart: always
     ports:
-      - "8090:8090"
+      - "9090:8090"
     environment:
-      - DB_USERNAME_FILE=/run/secrets/db_username
-      - DB_PASSWORD_FILE=/run/secrets/db_password
-    secrets:
-      - db_username
-      - db_password
+      DB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
     networks:
       - micro-services
+    depends_on:
+      - mysql1
 
 networks:
   micro-services:
     external: true
-
-secrets:
-  db_username:
-    file: ./secrets/db_username.txt
-  db_password:
-    file: ./secrets/db_password.txt
