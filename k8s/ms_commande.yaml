@@ -121,6 +121,13 @@ spec:
           image: idriss5234/ms_commande:latest
           ports:
             - containerPort: 8092
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
           env:
             - name: DB_USERNAME
               valueFrom:

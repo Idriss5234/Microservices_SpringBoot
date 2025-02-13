@@ -35,6 +35,13 @@ spec:
                 secretKeyRef:
                   name: db-credentials
                   key: db_password # Password for root1 user
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
           volumeMounts:
             - name: mysql-data
               mountPath: /var/lib/mysql

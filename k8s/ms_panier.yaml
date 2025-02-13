@@ -30,15 +30,16 @@ spec:
                 secretKeyRef:
                   name: db-credentials
                   key: db_password # Password for root1 user
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
           volumeMounts:
             - name: mysql-data
               mountPath: /var/lib/mysql
-            - name: sql-scripts3
-              mountPath: /docker-entrypoint-initdb.d
-      volumes:
-        - name: sql-scripts3
-          configMap:
-            name: mysql-init-scripts3
   volumeClaimTemplates:
     - metadata:
         name: mysql-data
