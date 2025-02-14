@@ -1,0 +1,8 @@
+public_key_location = "C:/Users/ADMIN/.ssh/id_rsa.pub"
+private_key_location = "C:/Users/ADMIN/.ssh/id_rsa"
+aws_region = "eu-north-1"
+vpc_cidr_block = "10.0.0.0/16"
+env_prefix = "ms-prod"
+subnet_cidr_block = "10.0.1.0/24"
+avail_zone = "eu-north-1a"
+my_ip = "0.0.0.0/0" 
