@@ -1,11 +1,10 @@
----
 - name: Wait for ssh connection
   hosts: all
   gather_facts: False
   tasks:
     - name: Wait for SSH to come up
       wait_for:
-        host: "{{ (ansible_ssh_host)|default(ansible_host)) | default(inventory_hostname) }}"
+        host: "{{ (ansible_ssh_host)|default(ansible_host)|default(inventory_hostname) }}"
         port: 22
         delay: 60
         timeout: 300
@@ -19,14 +18,14 @@
   gather_facts: False
   tasks:
     - name: Install python3 & docker
+      yum:
+        name:
+          - python3
+          - docker
+        state: present
+        update_cache: yes
       vars:
         ansible_python_interpreter: /usr/bin/python
-        yum:
-          name:
-            - python3
-            - docker
-          state: present
-          update_cache: yes
     - name: Install docker-compose
       shell: curl -L https://github.com/docker/compose/releases/download/1.7.0-rc1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
     - name: Permissions docker-compose
@@ -53,7 +52,7 @@
         name: ec2-user
         groups: docker
         append: yes
-    - name: reconnect
+    - name: Reconnect after group change
       meta: reset-connection
 
 - name: Copy docker-compose files
@@ -144,14 +143,24 @@
   gather_facts: False
   become: yes
   tasks:
-    - name: docker login
+    - name: Docker login
       docker_login:
-        registry_url: https://https://index.docker.io/v1/
+        registry_url: "https://index.docker.io/v1/"
         username: "{{ docker_username }}"
         password: "{{ docker_password }}"
-    - name: Start docker containers
-      shell: docker-compose -f /home/ec2-user/micro-services/ms_commande/docker-compose2.yml up -d
-    - name: Start docker containers
-      shell: docker-compose -f /home/ec2-user/micro-services/ms_utilisateur/docker-compose.yml up -d
-    - name: Start docker containers
-      shell: docker-compose -f /home/ec2-user/micro-services/ms_panier/docker-compose.yml up -d
+
+    - name: Start global docker containers
+      docker_compose:
+        project_src: "/home/ec2-user/micro-services/docker-compose1.yml"
+
+    - name: Start ms_commande containers
+      docker_compose:
+        project_src: "/home/ec2-user/micro-services/ms_commande/docker-compose2.yml"
+
+    - name: Start ms_utilisateur containers
+      docker_compose:
+        project_src: "/home/ec2-user/micro-services/ms_utilisateur/docker-compose.yml"
+
+    - name: Start ms_panier containers
+      docker_compose:
+        project_src: "/home/ec2-user/micro-services/ms_panier/docker-compose.yml"
