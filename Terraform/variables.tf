@@ -6,3 +6,4 @@ variable avail_zone{}
 variable my_ip{}
 variable "public_key_location" {}
 variable "private_key_location" {}
+variable "local_exec_dir" {}

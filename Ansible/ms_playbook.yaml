@@ -1,0 +1,157 @@
+---
+- name: Wait for ssh connection
+  hosts: all
+  gather_facts: False
+  tasks:
+    - name: Wait for SSH to come up
+      wait_for:
+        host: "{{ (ansible_ssh_host)|default(ansible_host)) | default(inventory_hostname) }}"
+        port: 22
+        delay: 60
+        timeout: 300
+        search_regex: OpenSSH
+      vars:
+        ansible_connection: local
+
+- name: Install packages
+  hosts: all
+  become: yes
+  gather_facts: False
+  tasks:
+    - name: Install python3 & docker
+      vars:
+        ansible_python_interpreter: /usr/bin/python
+        yum:
+          name:
+            - python3
+            - docker
+          state: present
+          update_cache: yes
+    - name: Install docker-compose
+      shell: curl -L https://github.com/docker/compose/releases/download/1.7.0-rc1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+    - name: Permissions docker-compose
+      shell: chmod +x /usr/local/bin/docker-compose
+
+- name: Start docker service
+  hosts: all
+  become: yes
+  gather_facts: False
+  tasks:
+    - name: Start docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
+
+- name: Add ec2-user to docker group
+  hosts: all
+  become: yes
+  gather_facts: False
+  tasks:
+    - name: Add ec2-user to docker group
+      user:
+        name: ec2-user
+        groups: docker
+        append: yes
+    - name: reconnect
+      meta: reset-connection
+
+- name: Copy docker-compose files
+  hosts: all
+  gather_facts: False
+  become: yes
+  tasks:
+    - name: Create directories for ms_commande
+      file:
+        path: "/home/ec2-user/micro-services/ms_commande"
+        state: directory
+        mode: "0755"
+
+    - name: Copy docker-compose files for ms_commande
+      win_copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+      with_items:
+        - {
+            src: "C:\\Users\\ADMIN\\Desktop\\micro-services\\docker-compose.yaml",
+            dest: "/home/ec2-user/micro-services/docker-compose1.yml",
+          }
+        - {
+            src: "C:\\Users\\ADMIN\\Desktop\\micro-services\\micro-service-commande\\docker-compose.yaml",
+            dest: "/home/ec2-user/micro-services/ms_commande/docker-compose2.yml",
+          }
+        - {
+            src: "C:\\Users\\ADMIN\\Desktop\\micro-services\\micro-service-commande\\.env",
+            dest: "/home/ec2-user/micro-services/ms_commande/.env",
+          }
+        - {
+            src: "C:\\Users\\ADMIN\\Desktop\\micro-services\\micro-service-commande\\commande_dump.sql",
+            dest: "/home/ec2-user/micro-services/ms_commande/commande_dump.sql",
+          }
+
+    - name: Create directories for ms_utilisateur
+      file:
+        path: "/home/ec2-user/micro-services/ms_utilisateur"
+        state: directory
+        mode: "0755"
+
+    - name: Copy docker-compose files for ms_utilisateur
+      win_copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+      with_items:
+        - {
+            src: "C:\\Users\\ADMIN\\Desktop\\micro-services\\micro-service-utilisateur\\docker-compose.yaml",
+            dest: "/home/ec2-user/micro-services/ms_utilisateur/docker-compose.yml",
+          }
+        - {
+            src: "C:\\Users\\ADMIN\\Desktop\\micro-services\\micro-service-utilisateur\\.env",
+            dest: "/home/ec2-user/micro-services/ms_utilisateur/.env",
+          }
+        - {
+            src: "C:\\Users\\ADMIN\\Desktop\\micro-services\\micro-service-utilisateur\\utilisateur_dump.sql",
+            dest: "/home/ec2-user/micro-services/ms_utilisateur/utilisateur_dump.sql",
+          }
+
+    - name: Create directories for ms_panier
+      file:
+        path: "/home/ec2-user/micro-services/ms_panier"
+        state: directory
+        mode: "0755"
+
+    - name: Copy docker-compose files for ms_panier
+      win_copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+      with_items:
+        - {
+            src: "C:\\Users\\ADMIN\\Desktop\\micro-services\\micro-service-panier\\docker-compose.yaml",
+            dest: "/home/ec2-user/micro-services/ms_panier/docker-compose.yml",
+          }
+        - {
+            src: "C:\\Users\\ADMIN\\Desktop\\micro-services\\micro-service-panier\\.env",
+            dest: "/home/ec2-user/micro-services/ms_panier/.env",
+          }
+        - {
+            src: "C:\\Users\\ADMIN\\Desktop\\micro-services\\micro-service-panier\\panier_dump.sql",
+            dest: "/home/ec2-user/micro-services/ms_panier/panier_dump.sql",
+          }
+
+- name: Start docker containers
+  hosts: all
+  vars_files:
+    - vars.yaml
+  gather_facts: False
+  become: yes
+  tasks:
+    - name: docker login
+      docker_login:
+        registry_url: https://https://index.docker.io/v1/
+        username: "{{ docker_username }}"
+        password: "{{ docker_password }}"
+    - name: Start docker containers
+      shell: docker-compose -f /home/ec2-user/micro-services/ms_commande/docker-compose2.yml up -d
+    - name: Start docker containers
+      shell: docker-compose -f /home/ec2-user/micro-services/ms_utilisateur/docker-compose.yml up -d
+    - name: Start docker containers
+      shell: docker-compose -f /home/ec2-user/micro-services/ms_panier/docker-compose.yml up -d

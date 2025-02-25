@@ -18,10 +18,20 @@ resource "aws_instance" "ms_ec2" {
     user="ec2-user"
     private_key=file(var.private_key_location)
  }
+
+    
 }
 
 resource "aws_key_pair" "ms_key_pair" {
     key_name = "ms-key-pair"
     public_key = file(var.public_key_location)
   
+}
+
+resource "null_resource" "configure_server" {
+    provisioner "local-exec" {
+        working_dir = var.local_exec_dir
+        command = "ansible-playbook -i ${aws_instance.ms_ec2.public_ip}, --private-key ${var.private_key_location} --user ec2-user,  ms_playbook.yaml"
+      
+    }
 }
