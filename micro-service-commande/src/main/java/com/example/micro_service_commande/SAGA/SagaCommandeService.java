@@ -26,7 +26,7 @@ public class SagaCommandeService {
      */
 
     public void startCommandeSaga(int userId, int panierId, int requiredQuantity) {
-        System.out.println("Starting Commande Saga...");
+        //System.out.println("Starting Commande Saga...");
 
         Commande commande = new Commande();
         commande.setUserId(userID);
@@ -88,11 +88,10 @@ public class SagaCommandeService {
 
                 Commande commande = commandeRepository.findById(commandeID).orElse(null);
                 commande.setStatut("Completed");
-                System.out.println("message.getPanierPrix()"+message.getPanierPrix()+"message.getRequiredQte()"+message.getRequiredQte());
                 commande.setPrix(message.getPanierPrix()*message.getRequiredQte());
 
             commandeRepository.save(commande);
-            System.out.println("Commande successfully updated and commande prix = " + commande.getPrix());
+            //System.out.println("Commande successfully updated and commande prix = " + commande.getPrix());
 
         } else {
             //System.out.println("Commande update failed.");
@@ -130,7 +129,7 @@ public class SagaCommandeService {
             if (commande != null) {
                 commande.setStatut("CANCELLED");
                 commandeRepository.save(commande);
-                System.out.println("Commande successfully cancelled due to invalid Panier quantity.");
+                //System.out.println("Commande successfully cancelled due to invalid Panier quantity.");
             } else {
                 System.out.println("Commande not found for compensation.");
             }
