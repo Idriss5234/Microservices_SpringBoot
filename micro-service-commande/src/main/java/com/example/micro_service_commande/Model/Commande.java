@@ -4,9 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
-
-import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.time.Instant;
 
 @Getter
@@ -31,6 +28,7 @@ public class Commande {
     @Column(name = "prix", nullable = false)
     private double prix;
 
+    @ColumnDefault("'Pending'")
     @Column(name = "statut", length = 50)
     private String statut;
 

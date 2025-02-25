@@ -3,8 +3,6 @@ package com.example.micro_service_panier.Model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 @Getter
@@ -99,7 +97,6 @@ public class Panier {
     public Panier(String nomPanier,String itemDetails,Boolean disponibilité,  Timestamp aRetirer,  double prix, Integer quantité) {
         this.aRetirer = aRetirer;
         this.disponibilité = disponibilité;
-        this.id = id;
         this.itemDetails = itemDetails;
         this.nomPanier = nomPanier;
         this.prix = prix;
