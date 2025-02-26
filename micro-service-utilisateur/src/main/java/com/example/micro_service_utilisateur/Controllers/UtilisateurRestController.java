@@ -1,6 +1,7 @@
 package com.example.micro_service_utilisateur.Controllers;
 
 import com.example.micro_service_utilisateur.Model.Utilisateur;
+import com.example.micro_service_utilisateur.Services.UtilisateurService;
 import com.example.micro_service_utilisateur.Repository.UtilisateurRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -8,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-
+@RequestMapping("/api/Utilisateurs")
 public class UtilisateurRestController {
 
     private final UtilisateurRepository utilisateurRepository;
@@ -19,19 +20,19 @@ public class UtilisateurRestController {
     }
 
 
-    @GetMapping("/Utilisateurs")
+    @GetMapping("/Recuperer")
     public List<Utilisateur> getUtilisateurs() {
         return utilisateurRepository.findAll();
     }
 
-    @GetMapping("/Utilisateurs/{id}")
-    public Utilisateur getUtilisateur(@PathVariable("id") long id) {
-        return utilisateurRepository.findById(id).orElse(null);
-    }
-
-    @PostMapping("/Utilisateurs")
+    @PostMapping("/Ajouter")
     public Utilisateur addUtilisateur(@RequestBody Utilisateur u) {
         return utilisateurRepository.save(u);
+    }
+
+    @GetMapping("/{id}/exists")
+    public boolean checkUserExists(@PathVariable int id) {
+        return UtilisateurService.userExists(id);
     }
 }
 

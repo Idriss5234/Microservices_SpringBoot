@@ -1,15 +1,9 @@
 package com.example.micro_service_panier.Controllers;
 
-import com.example.micro_service_panier.Model.Panier;
-import com.example.micro_service_panier.Repository.PanierRepository;
 import com.example.micro_service_panier.Services.PanierService;
-
-import org.apache.hc.core5.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/paniers")
@@ -34,25 +28,25 @@ public class PanierController {
 
         String response = panierService.updatePanier(panierId, quantity);
 
-        if (response.startsWith("✅")) {
+        if (response.startsWith("Succès")) {
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.badRequest().body(response);
         }
     } catch (Exception e) {
-        return ResponseEntity.badRequest().body("❌ Erreur lors de la mise à jour du panier.");
+        return ResponseEntity.badRequest().body("Erreur lors de la mise à jour du panier.");
     }
-}
+    }
 
 
-@PostMapping("/rollback/{id}")
-public void rollbackPanier(@PathVariable int id, @RequestParam int quantite) {
-    panierService.rollbackPanier(id, quantite);  // Passage de la quantité à réajuster
-}
+    @PostMapping("/rollback/{id}")
+    public void rollbackPanier(@PathVariable int id, @RequestParam int quantite) {
+        panierService.rollbackPanier(id, quantite); 
+    }
 
 
     @GetMapping("/{id}/prix")
     public double getPanierPrice(@PathVariable int id) {
-        return panierService.getPanierPrix(id);  // Appeler un service pour calculer et retourner le prix
+        return panierService.getPanierPrix(id);  
     }
 }

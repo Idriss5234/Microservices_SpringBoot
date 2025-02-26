@@ -2,11 +2,9 @@ package com.example.micro_service_panier.Services;
 
 import com.example.micro_service_panier.Model.Panier;
 import com.example.micro_service_panier.Repository.PanierRepository;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
 @Service
@@ -29,26 +27,25 @@ public class PanierService {
         Optional<Panier> panierOpt = panierRepository.findById(Long.valueOf(id));
     
         if (panierOpt.isEmpty()) {
-            return "❌ Panier introuvable.";
+            return "Panier introuvable.";
         }
     
         Panier panier = panierOpt.get();
     
         if (panier.getQuantité() < quantite) {
-            return "⚠️ Stock insuffisant. Disponible : " + panier.getQuantité();
+            return "Stock insuffisant. Disponible : " + panier.getQuantité();
         }
     
         panier.setQuantité(panier.getQuantité() - quantite);
         panierRepository.save(panier);
         
-        return "✅ Mise à jour réussie.";
+        return "Succès , Mise à jour réussie.";
     }
-    
-    
 
     /**
      * Récupérer le prix du panier
      */
+
     public double getPanierPrix(int panierId) {
         Optional<Panier> panierOpt = panierRepository.findById((long) panierId);
         if (panierOpt.isPresent()) {
@@ -59,11 +56,15 @@ public class PanierService {
         }
     }
 
+    /**
+     * Compensation
+     */
+    
     public void rollbackPanier(int id, int quantiteInitiale) {
         Optional<Panier> panierOpt = panierRepository.findById(Long.valueOf(id));
         if (panierOpt.isPresent()) {
             Panier panier = panierOpt.get();
-            panier.setQuantité(panier.getQuantité() + quantiteInitiale); // Réajuster la quantité en rajoutant celle qui a été soustraite
+            panier.setQuantité(panier.getQuantité() + quantiteInitiale); 
             panierRepository.save(panier);
             logger.info("Quantité du panier {} réajustée à : {}", panier.getId(), panier.getQuantité());
 

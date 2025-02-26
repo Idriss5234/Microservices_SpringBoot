@@ -7,8 +7,6 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.Instant;
 
@@ -23,7 +21,7 @@ public class MicroServicePanierApplication {
 
 	@Bean
 	ApplicationRunner start(PanierRepository repository) {
-		return args -> {
+		return args -> {/* 
 			repository.save(new Panier(
 					"Fruits ",                  // nomPanier
 					"Pommes, bananes",          // itemDetails
@@ -31,6 +29,6 @@ public class MicroServicePanierApplication {
 					Timestamp.from(Instant.now()),                   // aRetirer
 					2.99,              // prix
 					10                                     // quantité
-			));
+			));*/
 		};
 }}

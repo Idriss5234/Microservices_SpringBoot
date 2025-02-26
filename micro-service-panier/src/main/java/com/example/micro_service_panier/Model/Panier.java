@@ -99,7 +99,6 @@ public class Panier {
     public Panier(String nomPanier,String itemDetails,Boolean disponibilité,  Timestamp aRetirer,  double prix, Integer quantité) {
         this.aRetirer = aRetirer;
         this.disponibilité = disponibilité;
-        this.id = id;
         this.itemDetails = itemDetails;
         this.nomPanier = nomPanier;
         this.prix = prix;
