@@ -117,7 +117,7 @@ SPRING_DATASOURCE_PASSWORD
 
 ---
 
-## ▶️ Exécution du projet
+## ▶️ Exécution du projet en local
   
 1. Démarrez RabbitMQ (si non lancé avec Docker) :
 
@@ -138,6 +138,11 @@ mvn spring-boot:run
 
 Identifiants par défaut : guest / guest
 
+📌 Affichage des logs détaillés : 
+
+Si vous souhaitez voir les détails de toutes les étapes d'exécution du projet, vous pouvez décommenter les lignes contenant System.out.println dans le code.
+Ces logs permettent d'afficher en console des informations sur le traitement des messages et l'évolution des transactions Saga.
+
 ---
 
 ## 🧪 Tests
@@ -155,5 +160,3 @@ Scénarios disponibles :
 
 Connectez-vous à l'interface de RabbitMQ : http://localhost:15672.
 Surveillez les messages dans les files d'attente pour confirmer que les communications entre services fonctionnent correctement.
-
-
