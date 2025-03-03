@@ -79,6 +79,7 @@ Ce projet comprend quatre microservices interconnectés :
    ```
 
 3. Configurez la base de données MySQL pour chaque service. Exemple de création d'une base pour le service Panier :
+Créer tout d'abord une nouvelle connection MySQL avec un Username et Mot de passe.
 
    ```sql
    CREATE DATABASE panier_db;
