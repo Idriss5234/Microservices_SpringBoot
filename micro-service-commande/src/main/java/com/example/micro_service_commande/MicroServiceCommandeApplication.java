@@ -10,7 +10,7 @@ import org.springframework.cache.annotation.EnableCaching;
 
 @SpringBootApplication
 @EnableRabbit  
-@EnableCaching
+
 
 
 public class MicroServiceCommandeApplication {

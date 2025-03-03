@@ -14,7 +14,7 @@ import java.time.Instant;
 
 @SpringBootApplication
 @EnableRabbit 
-@EnableCaching
+
 
 
 public class MicroServicePanierApplication {
