@@ -80,6 +80,8 @@ Les files suivantes sont configurées :
 mvn clean install
 
 3. Configurez la base de données MySQL pour chaque service. Exemple de création d'une base pour le service Panier :
+
+Créer une nouvelle connection MySQL avec un Username et Mot de passe
   
 CREATE DATABASE panier_db;
 
