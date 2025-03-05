@@ -15,7 +15,7 @@ services:
     networks:
       - micro-services
     volumes:
-      - ./utilisateur_dump.sql:/docker-entrypoint-initdb.d/utilisateur_dump.sql
+      - ./utilisateur_dump.sql:/docker-entrypoint-initdb.d/utilisateur_dump.sql #OPTIONEL!!, nous voulons migrer notre ancienne base de données c"st pourquoi on a utilisé ce volume
     command: --init-file /docker-entrypoint-initdb.d/utilisateur_dump.sql
 
   utilisateur:

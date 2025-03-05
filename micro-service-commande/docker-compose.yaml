@@ -15,7 +15,7 @@ services:
     networks:
       - micro-services
     volumes:
-      - ./commande_dump.sql:/docker-entrypoint-initdb.d/commande_dump.sql
+      - ./commande_dump.sql:/docker-entrypoint-initdb.d/commande_dump.sql #OPTIONEL!!, nous voulons migrer notre ancienne base de données c"st pourquoi on a utilisé ce volume
     command: --init-file /docker-entrypoint-initdb.d/commande_dump.sql
 
   commande:

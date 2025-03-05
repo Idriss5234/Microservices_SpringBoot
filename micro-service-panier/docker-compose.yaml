@@ -14,7 +14,7 @@ services:
     networks:
       - micro-services
     volumes:
-      - ./panier_dump.sql:/docker-entrypoint-initdb.d/panier_dump.sql
+      - ./panier_dump.sql:/docker-entrypoint-initdb.d/panier_dump.sql #OPTIONEL!!, nous voulons migrer notre ancienne base de données c"st pourquoi on a utilisé ce volume
 
   panier:
     image: idriss5234/ms_panier:latest
