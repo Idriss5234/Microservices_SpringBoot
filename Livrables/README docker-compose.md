@@ -43,7 +43,7 @@ Pour démarrer tous les services en un seul appel, exécutez la commande suivant
 docker-compose up -d
 ```
 
-Cela va lancer tous les conteneurs dans des processus détachés.
+Cela va lancer nos contenaires de RabbitMQ et Redis.
 
 ### Étape 2 : Lancer chaque microservice individuellement
 
