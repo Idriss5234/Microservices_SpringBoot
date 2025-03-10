@@ -21,7 +21,6 @@ Voici la liste des outils utilisés dans ce projet avec leurs versions exactes :
 
 - **Java** : OpenJDK 17
 - **Spring Boot** : 2.7.5
-- **Docker** : 26.0.0
 - **MySQL** : 8.0.40 (MySQL Community Server - GPL)
 - **Maven** : 3.9.8
 
@@ -58,10 +57,9 @@ Ce projet comprend quatre microservices interconnectés :
 ### Prérequis
 
 1. Installer **Java 17** ou une version supérieure.
-2. Installer **Docker**.
-3. Installer **Maven**.
-4. Installer **Spring Boot**.
-5. Installer **MySQL 8.0.40**.
+2. Installer **Maven**.
+3. Installer **Spring Boot**.
+4. Installer **MySQL 8.0.40**.
 
 ### Étapes
 
