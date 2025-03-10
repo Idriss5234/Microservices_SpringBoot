@@ -2,9 +2,8 @@ Voici une description des dossiers de notre structure microservices dans micro-s
 
 1. **Controllers** : Contient les contrôleurs gérant les requêtes HTTP (API REST).
 2. **Model** : Définit les classes de données et les entités du domaine.
-3. **RabbitMQ** : Configuration de RabbitMQ et définition des queues et des exchanges.
-4. **Repository** : Implémente l’accès aux données, souvent avec JPA ou MongoDB.
-5. **Services** : 
+3. **Repository** : Implémente l’accès aux données, souvent avec JPA ou MongoDB.
+4. **Services** : Contient la logique métier et les traitements appliqués aux données avant de les renvoyer au contrôleur.
 
 
 Et on a ajouté aussi un microservice Orchestrateur qui se compose de:
