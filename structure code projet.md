@@ -8,4 +8,4 @@ Voici une description des dossiers de notre structure microservices dans micro-s
 
 Et on a ajouté aussi un microservice Orchestrateur qui se compose de:
 1. **Controllers** : Contient les contrôleurs gérant les requêtes HTTP (API REST).
-2. **Services** : 
+2. **Services** : Contient la logique métier d'orchestration, c'est-à-dire la coordination des appels aux autres microservices pour assurer le bon déroulement du processus global (validation d’une commande en interagissant avec le panier).
